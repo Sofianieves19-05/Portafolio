@@ -1,0 +1,12 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Vista previa · Portafolio audiovisual</title></head><body><p style="font:16px Arial;padding:24px">Cargando vista previa del portafolio…</p><script>
+(async()=>{try{
+const r=await fetch('./index.html?preview='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('No se pudo cargar el portafolio original');
+const source=await r.text();const doc=new DOMParser().parseFromString(source,'text/html');
+const cards=[...doc.querySelectorAll('#galeria .video-card')];
+const clips=[["1794795948","IMG_5022"],["1794796861","IMG_5027"],["1794797088","IMG_5018"],["1794797147","IMG_5026"],["1794797201","IMG_5024"],["1794797260","IMG_5025"]];
+if(cards.length!==6)throw Error('La galería no contiene exactamente seis tarjetas');
+cards.forEach((card,i)=>{const img=card.querySelector('img.preview-still');if(!img)throw Error('Falta portada del video '+(i+1));const v=doc.createElement('video');v.controls=true;v.playsInline=true;v.preload='none';v.poster=img.getAttribute('src');v.setAttribute('aria-label','Reproducir '+card.querySelector('h3')?.textContent);const s=doc.createElement('source');s.src='https://res.cloudinary.com/us8bdyhe/video/upload/f_mp4/v'+clips[i][0]+'/'+clips[i][1]+'.mov';s.type='video/mp4';v.appendChild(s);v.append('Tu navegador no admite la reproducción de video.');img.replaceWith(v)});
+doc.querySelector('title').textContent+=' · Vista previa con videos';
+document.open();document.write('<!doctype html>'+doc.documentElement.outerHTML);document.close();
+}catch(e){document.body.textContent='No se pudo cargar la vista previa: '+e.message;}})();
+</script></body></html>
